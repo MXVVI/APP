@@ -8,13 +8,26 @@
         body {
             font-family: Arial, sans-serif;
             background: #f4f6f9;
+            color: #111827;
             margin: 0;
             padding: 40px;
+            transition: 0.3s;
+        }
+
+        body.escuro {
+            background: #0f172a;
+            color: #f8fafc;
         }
 
         .container {
             max-width: 800px;
             margin: auto;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
         }
 
         .card {
@@ -23,10 +36,25 @@
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        body.escuro .card {
+            background: #1e293b;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
         }
 
         h1, h2 {
             color: #333;
+        }
+
+        body.escuro h1,
+        body.escuro h2 {
+            color: #f8fafc;
+        }
+
+        label {
+            font-weight: bold;
         }
 
         input, textarea {
@@ -37,6 +65,13 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             box-sizing: border-box;
+        }
+
+        body.escuro input,
+        body.escuro textarea {
+            background: #0f172a;
+            color: white;
+            border: 1px solid #475569;
         }
 
         button {
@@ -52,6 +87,15 @@
             background: #1d4ed8;
         }
 
+        .botao-tema {
+            background: #111827;
+        }
+
+        body.escuro .botao-tema {
+            background: #f8fafc;
+            color: #111827;
+        }
+
         .mensagem {
             background: #f9fafb;
             padding: 15px;
@@ -59,11 +103,27 @@
             margin-bottom: 15px;
             border: 1px solid #e5e7eb;
         }
+
+        body.escuro .mensagem {
+            background: #0f172a;
+            border: 1px solid #334155;
+        }
+
+        #resposta {
+            margin-top: 15px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <div class="topo">
+            <button id="temaBtn" class="botao-tema">
+                🌙 Modo Escuro
+            </button>
+        </div>
 
         <div class="card">
             <h1>Envie sua mensagem</h1>
@@ -94,6 +154,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        const botaoTema = document.getElementById('temaBtn');
+
+        botaoTema.addEventListener('click', function() {
+            document.body.classList.toggle('escuro');
+
+            if (document.body.classList.contains('escuro')) {
+                botaoTema.textContent = '☀️ Modo Claro';
+            } else {
+                botaoTema.textContent = '🌙 Modo Escuro';
+            }
+        });
+
         const supabaseUrl = 'https://ugfefzedwxqhdqiwjdzp.supabase.co';
         const supabaseKey = 'sb_publishable_5rzAbOZHOnE_3oci9k_GCw_DAciyhNb';
 
