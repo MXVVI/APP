@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Mensagens</title>
+</head>
+<body>
+    <h1>Envie sua mensagem</h1>
+    <form id="mensagemForm">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome" required><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="mensagem">Mensagem:</label><br>
+        <textarea id="mensagem" name="mensagem" required></textarea><br><br>
+
+        <button type="submit">Enviar</button>
+    </form>
+    <div id="resposta"></div>
+    
+    <h2>Mensagens Salvas</h2>
+    <div id="listaMensagens"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl = 'https://ugfefzedwxqhdqiwjdzp.supabase.co';
+const supabaseKey = 'sb_publishable_5rzAbOZHOnE_3oci9k_GCw_DAciyhNb';
+
+const client = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+
+async function excluirMensagem(id) {
+
+    const { error } = await client
+        .from('messages')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert('Erro ao excluir');
+        console.error(error);
+        return;
+    }
+
+    carregarMensagens();
+}
+
+async function carregarMensagens() {
+
+    const { data, error } = await client
+        .from('messages')
+        .select('*');
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    const lista =
+        document.getElementById('listaMensagens');
+
+    lista.innerHTML = '';
+
+    data.forEach(item => {
+
+        lista.innerHTML += `
+            <div>
+                <strong>${item.nome}</strong><br>
+                ${item.email}<br>
+                ${item.mensagem}<br>
+
+                <button onclick="excluirMensagem(${item.id})">
+                    Excluir
+                </button>
+
+                <hr>
+            </div>
+        `;
+
+    });
+
+}
+
+document.getElementById('mensagemForm')
+.addEventListener('submit', function(event) {
+
+    event.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const mensagem = document.getElementById('mensagem').value;
+
+    const resposta =
+        document.getElementById('resposta');
+
+    resposta.innerHTML = 'Enviando...';
+
+    client
+        .from('messages')
+        .insert([
+            {
+                nome,
+                email,
+                mensagem
+            }
+        ])
+        .then(({ error }) => {
+
+            if (error) {
+
+                resposta.innerHTML =
+                    'Erro: ' + error.message;
+
+            } else {
+
+                resposta.innerHTML =
+                    'Mensagem enviada com sucesso!';
+
+		document.getElementById('mensagemForm').reset();
+
+                carregarMensagens();
+
+            }
+
+        });
+
+});
+
+carregarMensagens();
+
+</script>
+</body>
+</html>
